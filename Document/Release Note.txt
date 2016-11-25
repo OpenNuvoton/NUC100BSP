@@ -1,0 +1,57 @@
+/*---------------------------------------------------------------------------------------------------------*/
+/*                                                                                                         */
+/* Copyright (c) 2015 by Nuvoton Technology Corporation                                                    */
+/* All rights reserved                                                                                     */
+/*                                                                                                         */
+/*---------------------------------------------------------------------------------------------------------*/
+/*                                                                                                         */
+/* NuMicro(TM) NUC100 Series Board Support Package                                                         */
+/*                                                                                                         */
+/*---------------------------------------------------------------------------------------------------------*/
+
+Introduction:
+The NuMicro NUC100 Series Board Support Package (BSP) supports the basic materials for NuMicro 
+NUC100 series development and provides an easy way to use the NuMicro NUC100 series. 
+The documents and examples show how to use each peripheral library. The pre-created projects of each tool chain 
+(including KEIL and IAR) could be used as an application template.
+
+The supported tool chain includes: KEIL MDK 4.7, IAR EWARM 6.5 or higher versions.
+
+The default debug interface (ICE) of each sample project is Nu-Link. If using U-Link2 or J-Link, you may change the debugger
+option of the compiler tool chain.
+
+Update History:
+
+2015/5/12:
+    v3.00.002
+    - Fix SC_SET_STOP_BIT_LEN define error in SC Driver.
+    - Fix all IAR samples to set entry point from __iar_program_start to Reset_Handler.
+    - Fix all samples that run faster than 50MHz. (NUC100 series only support up to 50MHz).
+    - Fix UART1->IRCR setting bug in IrDA_FunctionTxTest().
+    - Fix Flush FIFO end test message print bug in the end of RS485_9bitModeSlave().
+    - Fix the wrong shift position for HCLK divider in main() of SYS sample code.
+    - Fix PLLCON_SETTING constant define from SYSCLK_PLLCON_50MHz_XTAL to CLK_PLLCON_50MHz_HXT.
+    - Fix bug on CLKO multi-function pin configuration in SYS_Init() of same samples.
+    - Fix UA_LIN_CTL[4] bit field name is "MUTE_EN" not "WAKE_EN" in UART LIN_CTL Bit Field Definitions. 
+    - Fix CLK_SetCoreClock() core lock range from "25~50MHz" to "25~72MHz".
+    - Fix CLK_SysTickDelay() bug, that COUNTFLAG(SysTick_CTRL[16]) may not be cleared after write SysTick_VAL.
+    - Fix typo in UA_LIN_CTL constants definitions of UART driver, it is "UART_LIN_CTL_LIN_BKDET_EN" not "UART_LIN_CTL_LIN_BKDET_ENN".
+    - Fix UA_LIN_CTL[4] bit field name of UART driver. It is "MUTE_EN" not "WAKE_EN" in UA_LIN_CTL constants definitions.
+    - Fix API declare name from I2C_SetClockBusFreq() to I2C_SetBusClockFreq() in I2C driver.
+    - Fix SYS_IS_SYSTEM_RST() bug in SYS driver, it is "SYS_RSTSRC_RSTS_SYS_Msk" not "SYS_RSTSRC_RSTS_MCU_Msk".
+    - Fix typo of PD14 Multi-Function constant definitions.
+    - Fix clear Time-out flag method bug in I2C_ClearTimeoutFlag() of I2C driver.
+    - Fix PDMA_IS_CH_BUSY() definition bug in PDMA driver.
+    - Remove unused PWRCON, FREQ_72MHZ constant definitions from clock driver.
+    - Remove unused constant define "RXBUFSIZE".
+    - Add SPI_SET_SS_LEVEL() macro definition. This macro allows user to set both SPI_SS pins.
+    - Add a lack macro, SYS_IS_LVR_RST() to SYS driver.
+    - Add UART FIFO size constants definitions to UART driver.
+    - Add CLK_PLLCON_25MHz_HXT, CLK_PLLCON_25MHz_HIRC, CLK_PLLCON_24MHz_HXT, and CLK_PLLCON_24MHz_HIRC constant definitions to CLK driver.
+    - Add FMC_MultiBoot_SwReset sample code to show how to boot to different AP.
+    - Modify time-out counter to a fix value and not to use SystemCoreClockUpdate() in CLK_WaitClockReady() to improve compatibility.
+    - Revise the following four macro definitions to avoid affecting another SPI_SS pin, SPI_SET_SS0_HIGH(), SPI_SET_SS1_HIGH(), SPI_SET_SS0_LOW() and SPI_SET_SS1_LOW().
+
+2014/11/27:
+    v3.00.001
+     - First release to support Nuvoton BSP v3.0 API.

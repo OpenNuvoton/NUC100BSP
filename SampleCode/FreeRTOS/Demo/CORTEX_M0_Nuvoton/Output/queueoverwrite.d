@@ -1,0 +1,14 @@
+.\output\queueoverwrite.o: ..\Common\Minimal\QueueOverwrite.c
+.\output\queueoverwrite.o: ..\..\Source\include\FreeRTOS.h
+.\output\queueoverwrite.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\output\queueoverwrite.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\output\queueoverwrite.o: ..\CORTEX_M0_Infineon_XMC1000_IAR_Keil_GCC\FreeRTOSConfig.h
+.\output\queueoverwrite.o: ..\..\Source\include\projdefs.h
+.\output\queueoverwrite.o: ..\..\Source\include\portable.h
+.\output\queueoverwrite.o: ..\..\Source\include\deprecated_definitions.h
+.\output\queueoverwrite.o: ..\..\Source\portable\RVDS\ARM_CM0\portmacro.h
+.\output\queueoverwrite.o: ..\..\Source\include\mpu_wrappers.h
+.\output\queueoverwrite.o: ..\..\Source\include\task.h
+.\output\queueoverwrite.o: ..\..\Source\include\list.h
+.\output\queueoverwrite.o: ..\..\Source\include\queue.h
+.\output\queueoverwrite.o: ..\Common\include\QueueOverwrite.h

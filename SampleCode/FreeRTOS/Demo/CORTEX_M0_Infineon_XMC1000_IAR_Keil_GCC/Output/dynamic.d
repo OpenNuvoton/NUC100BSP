@@ -1,0 +1,16 @@
+.\output\dynamic.o: ..\Common\Minimal\dynamic.c
+.\output\dynamic.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\output\dynamic.o: ..\..\Source\include\FreeRTOS.h
+.\output\dynamic.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\output\dynamic.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\output\dynamic.o: ..\CORTEX_M0_Infineon_XMC1000_IAR_Keil_GCC\FreeRTOSConfig.h
+.\output\dynamic.o: ..\..\Source\include\projdefs.h
+.\output\dynamic.o: ..\..\Source\include\portable.h
+.\output\dynamic.o: ..\..\Source\include\deprecated_definitions.h
+.\output\dynamic.o: ..\..\Source\portable\RVDS\ARM_CM0\portmacro.h
+.\output\dynamic.o: ..\..\Source\include\mpu_wrappers.h
+.\output\dynamic.o: ..\..\Source\include\task.h
+.\output\dynamic.o: ..\..\Source\include\list.h
+.\output\dynamic.o: ..\..\Source\include\semphr.h
+.\output\dynamic.o: ..\..\Source\include\queue.h
+.\output\dynamic.o: ..\Common\include\dynamic.h

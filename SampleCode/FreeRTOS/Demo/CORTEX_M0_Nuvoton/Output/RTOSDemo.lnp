@@ -1,0 +1,25 @@
+--cpu Cortex-M0
+".\output\system_nuc100series.o"
+".\output\startup_nuc100series.o"
+".\output\timers.o"
+".\output\list.o"
+".\output\queue.o"
+".\output\tasks.o"
+".\output\port.o"
+".\output\heap_4.o"
+".\output\main.o"
+".\output\main-blinky.o"
+".\output\main-full.o"
+".\output\regtest_keil.o"
+".\output\partest_xmc1300.o"
+".\output\retarget.o"
+".\output\dynamic.o"
+".\output\recmutex.o"
+".\output\blocktim.o"
+".\output\countsem.o"
+".\output\queueset.o"
+".\output\queueoverwrite.o"
+--strict --scatter ".\Output\RTOSDemo.sct"
+--summary_stderr --info summarysizes --map
+--info sizes --info totals --info unused --info veneers
+--list ".\RTOSDemo.map" -o .\Output\RTOSDemo.axf
