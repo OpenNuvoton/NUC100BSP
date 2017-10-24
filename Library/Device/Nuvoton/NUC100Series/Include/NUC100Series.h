@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     NUC100Series.h
  * @version  V3.0
- * $Revision: 32 $
- * $Date: 15/06/18 3:52p $
+ * $Revision: 33 $
+ * $Date: 17/05/26 10:54a $
  * @brief    NUC100 Series Peripheral Access Layer Header File
  *
  * @note
@@ -9816,7 +9816,7 @@ typedef struct
 #define UART_ISR_HW_BUF_ERR_IF_Msk  (1ul << UART_ISR_HW_BUF_ERR_IF_Pos)     /*!< UART_T::ISR: HW BUF_ERR_IF Mask         */
 
 #define UART_ISR_HW_TOUT_IF_Pos     20                                      /*!< UART_T::ISR: HW TOUT_IF Position        */
-#define UART_ISR_HW_TOUT_IF_Msk     (1ul << UART_ISR_HW_TOUT_IFF_Pos)       /*!< UART_T::ISR: HW TOUT_IF Mask            */
+#define UART_ISR_HW_TOUT_IF_Msk     (1ul << UART_ISR_HW_TOUT_IF_Pos)        /*!< UART_T::ISR: HW TOUT_IF Mask            */
 
 #define UART_ISR_HW_MODEM_IF_Pos    19                                      /*!< UART_T::ISR: HW MODEM_IF Position       */
 #define UART_ISR_HW_MODEM_IF_Msk    (1ul << UART_ISR_HW_MODEM_IF_Pos)       /*!< UART_T::ISR: HW MODEM_IF Mask           */
