@@ -258,6 +258,11 @@ int32_t main(void)
     printf("|    NUC100 I2C Driver Sample Code with EEPROM 24LC64   |\n");
     printf("+-------------------------------------------------------+\n");
 
+
+    printf("Configure I2C0 as a master.\n");
+    printf("The I/O connection for I2C0:\n");
+    printf("I2C0_SDA(PA.8), I2C0_SCL(PA.9)\n");
+
     /* Init I2C0 to access EEPROM */
     I2C0_Init();
 
