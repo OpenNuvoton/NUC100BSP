@@ -14,7 +14,11 @@
 #define PLL_CLOCK           50000000
 
 
+#if defined(__GNUC__)
+#define APROM_TEST_BASE             0x9000
+#else
 #define APROM_TEST_BASE             0x3000
+#endif
 #define DATA_FLASH_TEST_BASE        0xF000
 #define DATA_FLASH_TEST_END         0x10000
 #define TEST_PATTERN                0x5A5A5A5A

@@ -138,7 +138,7 @@ int main(void)
 
     printf("\n\nCPU @ %dHz\n", SystemCoreClock);
     printf("+--------------------------------+\n");
-    printf("|    CRC CCITT Mode Sample Code   |\n");
+    printf("|    CRC CCITT Mode Sample Code  |\n");
     printf("+--------------------------------+\n\n");
 
     printf("# Calculate string \"123456789\" CRC-CCITT checksum value by CRC DMA mode.\n");

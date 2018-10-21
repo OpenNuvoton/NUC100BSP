@@ -76,7 +76,7 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Set GPB multi-function pins for UART0 RXD and TXD  */
     SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB1_Msk | SYS_GPB_MFP_PB0_Msk);
-    SYS->GPB_MFP |= SYS_GPB_MFP_PB1_UART0_TXD | SYS_GPB_MFP_PB0_UART0_RXD;
+    SYS->GPB_MFP |= (SYS_GPB_MFP_PB1_UART0_TXD | SYS_GPB_MFP_PB0_UART0_RXD);
 }
 
 
@@ -250,6 +250,21 @@ int32_t main(void)
         FMC_LDROM_Test();
     }
 
+#if defined(__GNUC__)
+    for(i = 0; i < 4; i++)
+    {
+        /* Call the function of LDROM */
+        func = (int32_t (*)(int32_t))g_au32funcTable[i];
+        if(func(i + 1) == ((i + 1)*(i + 1)))
+        {
+            printf("Call LDROM function %d ok!\n", i);
+        }
+        else
+        {
+            printf("Call LDROM function %d fail.\n", i);
+        }
+    }
+#else
     for(i = 0; i < 4; i++)
     {
         /* Call the function of LDROM */
@@ -263,6 +278,7 @@ int32_t main(void)
             printf("Call LDROM function %d fail.\n", i);
         }
     }
+ #endif
 
 lexit:
 

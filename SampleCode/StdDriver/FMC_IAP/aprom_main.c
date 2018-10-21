@@ -55,7 +55,8 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Set GPB multi-function pins for UART0 RXD and TXD */
-    SYS->GPB_MFP = SYS_GPB_MFP_PB0_UART0_RXD | SYS_GPB_MFP_PB1_UART0_TXD;
+    SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB0_Msk | SYS_GPB_MFP_PB1_Msk);
+    SYS->GPB_MFP |= (SYS_GPB_MFP_PB0_UART0_RXD | SYS_GPB_MFP_PB1_UART0_TXD);
 
 }
 
@@ -143,9 +144,9 @@ int main()
     uint8_t     u8Item;
     uint32_t    u32Data;
     char *acBootMode[] = {"LDROM+IAP", "LDROM", "APROM+IAP", "APROM"};
-    uint32_t u32CBS;
-    void (*func)(void);
-
+    uint32_t    u32CBS;
+    FUNC_PTR    *ResetFunc;
+    
     /* Unlock protected registers */
     SYS_UnlockReg();
 
@@ -178,9 +179,6 @@ int main()
 
     u32Data = FMC_ReadCID();
     printf("  Company ID ............................ [0x%08x]\n", u32Data);
-
-    u32Data = FMC_ReadDID();
-    printf("  Device ID ............................. [0x%08x]\n", u32Data);
 
     u32Data = FMC_ReadPID();
     printf("  Product ID ............................ [0x%08x]\n", u32Data);
@@ -225,12 +223,23 @@ int main()
                 /* Set VECMAP to LDROM for booting from LDROM */
                 FMC_SetVectorPageAddr(FMC_LDROM_BASE);
 
-                /* Set function pointer to execute LDROM */
-                func = (void (*)(void))M32(FMC_LDROM_BASE + 4);
+                /* Obtain Reset Handler address of new boot. */
+                ResetFunc = (FUNC_PTR *)M32(4);
 
-                func();
+#if defined(__GNUC__)
+                /* Set Main Stack Pointer register of new boot */
+                __set_MSP(M32(FMC_Read(FMC_LDROM_BASE)));
+#else
+                /* Set Main Stack Pointer register of new boot */
+                __set_MSP(M32(0));
+#endif    
+    
+                /* Call reset handler of new boot */
+                ResetFunc();
+//                /* Software reset to boot to LDROM */
+//                NVIC_SystemReset();
 
-                while(1);
+                break;
 
             default :
                 break;
