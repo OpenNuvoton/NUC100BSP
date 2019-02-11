@@ -221,7 +221,7 @@ int main(void)
     TIMER_Start(TIMER3);
 
     /* Check TM2_EXT interrupt counts */
-    while(g_au32TMRINTCount[2] <= 10)
+    while(g_au32TMRINTCount[2] < 10)
     {
         if(g_au32TMRINTCount[2] != u32InitCount)
         {
