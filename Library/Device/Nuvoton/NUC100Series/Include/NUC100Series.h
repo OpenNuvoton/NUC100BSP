@@ -10337,7 +10337,7 @@ typedef struct
 #define USBD_EPSTS_EPSTS5_Msk    (7ul << USBD_EPSTS_EPSTS5_Pos)          /*!< USBD_T::EPSTS: EPSTS5 Mask */
 
 #define USBD_EPSTS_EPSTS4_Pos    20                                      /*!< USBD_T::EPSTS: EPSTS4 Position */
-#define USBD_EPSTS_EPSTS4_Msk    (7ul << USBD_EPSTS_EPSTS4_Pos)          /*!< USBD_T::EPSTS: EPSTS5 Mask */
+#define USBD_EPSTS_EPSTS4_Msk    (7ul << USBD_EPSTS_EPSTS4_Pos)          /*!< USBD_T::EPSTS: EPSTS4 Mask */
 
 #define USBD_EPSTS_EPSTS3_Pos    17                                      /*!< USBD_T::EPSTS: EPSTS3 Position */
 #define USBD_EPSTS_EPSTS3_Msk    (7ul << USBD_EPSTS_EPSTS3_Pos)          /*!< USBD_T::EPSTS: EPSTS3 Mask */
