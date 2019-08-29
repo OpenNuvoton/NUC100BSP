@@ -47,7 +47,7 @@
 		<link>
 			<name>Library/retarget.c</name>
 			<type>1</type>
-			<locationURI>PARENT-5-PROJECT_LOC/Library/StdDriver/src/retarget.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/Library/StdDriver/src/retarget.c</locationURI>
 		</link>
 		<link>
 			<name>User/main.c</name>
