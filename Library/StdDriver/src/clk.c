@@ -55,6 +55,8 @@ void CLK_DisableCKO(void)
   */
 void CLK_EnableCKO(uint32_t u32ClkSrc, uint32_t u32ClkDiv, uint32_t u32ClkDivBy1En)
 {
+    (void)u32ClkDivBy1En;
+
     /* CKO = clock source / 2^(u32ClkDiv + 1) */
     CLK->FRQDIV = CLK_FRQDIV_DIVIDER_EN_Msk | u32ClkDiv;
 

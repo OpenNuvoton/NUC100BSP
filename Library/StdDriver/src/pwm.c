@@ -47,6 +47,8 @@ uint32_t PWM_ConfigCaptureChannel(PWM_T *pwm,
     uint16_t u16Prescale = 2;
     uint16_t u16CNR = 0xFFFF;
 
+    (void)u32CaptureEdge;
+
     if(pwm == PWMA)
     {
         if(u32ChannelNum < 2)/* channel 0 and channel 1 */
@@ -86,7 +88,7 @@ uint32_t PWM_ConfigCaptureChannel(PWM_T *pwm,
                 u8Divider <<= 1; // clk divider could only be 1, 2, 4, 8, 16
                 continue;
             }
-            if(!((1000000  * ((u16Prescale * u8Divider) + 1)) > (u32NearestUnitTimeNsec * u32PWMClockSrc)))
+            if(!((1000000UL  * ((u16Prescale * u8Divider) + 1)) > (u32NearestUnitTimeNsec * u32PWMClockSrc)))
                 break;
             continue;
         }
@@ -295,6 +297,7 @@ void PWM_ForceStop(PWM_T *pwm, uint32_t u32ChannelMask)
  */
 void PWM_EnableADCTrigger(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Condition)
 {
+    (void)u32Condition;
     (pwm)->TCON |= (PWM_TCON_PWM0TEN_Msk << u32ChannelNum);
 }
 
@@ -320,6 +323,7 @@ void PWM_DisableADCTrigger(PWM_T *pwm, uint32_t u32ChannelNum)
  */
 void PWM_ClearADCTriggerFlag(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32Condition)
 {
+    (void)u32Condition;
     (pwm)->TSTATUS = (PWM_TSTATUS_PWM0TF_Msk << u32ChannelNum);
 }
 
@@ -564,6 +568,7 @@ uint32_t PWM_GetCaptureIntFlag(PWM_T *pwm, uint32_t u32ChannelNum)
  */
 void PWM_EnableDutyInt(PWM_T *pwm, uint32_t u32ChannelNum, uint32_t u32IntDutyType)
 {
+    (void)u32IntDutyType;
     (pwm)->PIER |= (PWM_PIER_PWMDIE0_Msk << u32ChannelNum);
 }
 
