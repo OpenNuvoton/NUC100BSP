@@ -177,7 +177,7 @@ uint32_t CLK_SetCoreClock(uint32_t u32Hclk)
     uint32_t u32HIRCSTB;
 
     /* Read HIRC clock source stable flag */
-    u32HIRCSTB = CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk;
+    u32HIRCSTB = CLK->CLKSTATUS;
 
     /* Boundary Check */
     if(u32Hclk > FREQ_50MHZ)
@@ -187,7 +187,7 @@ uint32_t CLK_SetCoreClock(uint32_t u32Hclk)
 
     /* Switch to HIRC for Safe. Avoid HCLK too high when applying new divider. */
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
-    while((CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk) == 0);
+    CLK_WaitClockReady(CLK_CLKSTATUS_OSC22M_STB_Msk);
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
 
     /* Disable PLL to Avoid PLL Unstable while Setting */
@@ -204,13 +204,13 @@ uint32_t CLK_SetCoreClock(uint32_t u32Hclk)
         u32Hclk = CLK_EnablePLL(CLK_PLLCON_PLL_SRC_HIRC, u32Hclk);
 
         /* Read HIRC clock source stable flag */
-        u32HIRCSTB = CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk;
+        u32HIRCSTB = CLK->CLKSTATUS;
     }
 
     CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_PLL, CLK_CLKDIV_HCLK(1));
 
     /* Disable HIRC if HIRC is disabled before setting core clock */
-    if(u32HIRCSTB == 0)
+    if (u32HIRCSTB && !(u32HIRCSTB & CLK_CLKSTATUS_OSC22M_STB_Msk))
         CLK->PWRCON &= ~CLK_PWRCON_OSC22M_EN_Msk;
 
     return u32Hclk;
@@ -235,11 +235,11 @@ void CLK_SetHCLK(uint32_t u32ClkSrc, uint32_t u32ClkDiv)
     uint32_t u32HIRCSTB;
 
     /* Read HIRC clock source stable flag */
-    u32HIRCSTB = CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk;
+    u32HIRCSTB = CLK->CLKSTATUS;
 
     /* Switch to HIRC for Safe. Avoid HCLK too high when applying new divider. */
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
-    while((CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk) == 0);
+    CLK_WaitClockReady(CLK_CLKSTATUS_OSC22M_STB_Msk);
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
 
     /* Apply new Divider */
@@ -252,7 +252,7 @@ void CLK_SetHCLK(uint32_t u32ClkSrc, uint32_t u32ClkDiv)
     SystemCoreClockUpdate();
 
     /* Disable HIRC if HIRC is disabled before switching HCLK source */
-    if(u32HIRCSTB == 0)
+    if (u32HIRCSTB && !(u32HIRCSTB & CLK_CLKSTATUS_OSC22M_STB_Msk))
         CLK->PWRCON &= ~CLK_PWRCON_OSC22M_EN_Msk;
 }
 
