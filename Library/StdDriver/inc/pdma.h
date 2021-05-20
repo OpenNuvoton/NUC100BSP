@@ -14,7 +14,9 @@
 #ifndef __PDMA_H__
 #define __PDMA_H__
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** @addtogroup Standard_Driver Standard Driver
   * @{
@@ -193,6 +195,8 @@ void PDMA_DisableInt(uint32_t u32Ch, uint32_t u32Mask);
   * @} End of Device_Driver
   */
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // __PDMA_H__ 
