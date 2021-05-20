@@ -36,6 +36,10 @@
 #ifndef __NUC100Series_H__
 #define __NUC100Series_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * ==========================================================================
  * ---------- Interrupt Number Definition -----------------------------------
@@ -11100,6 +11104,9 @@ typedef volatile unsigned long  vu32;       ///< Define 32-bit unsigned volatile
 
 /*@}*/ /* end of group Definitions */
 
+#ifdef __cplusplus
+}
+#endif
 
 /******************************************************************************/
 /*                         Peripheral header files                            */
@@ -11125,8 +11132,3 @@ typedef volatile unsigned long  vu32;       ///< Define 32-bit unsigned volatile
 #include "clk.h"
 #include "acmp.h"
 #endif
-
-
-
-
-
