@@ -121,7 +121,7 @@ extern "C"
 #define UART_LIN_CTL_LIN_LIN_PID(x) ((x) << UART_LIN_CTL_LIN_PID_Pos)       /*!< UA_LIN_CTL setting to set LIN PID value */
 
 /*---------------------------------------------------------------------------------------------------------*/
-/* UART BAUDRATE MODE constants definitions                                                                       */
+/* UART BAUDRATE MODE constants definitions                                                                */
 /*---------------------------------------------------------------------------------------------------------*/
 #define UART_BAUD_MODE0     (0) /*!< Set UART Baudrate Mode is Mode0 */
 #define UART_BAUD_MODE2     (UART_BAUD_DIV_X_EN_Msk | UART_BAUD_DIV_X_ONE_Msk) /*!< Set UART Baudrate Mode is Mode2 */
