@@ -5,8 +5,9 @@
  * $Date: 15/04/10 10:32a $
  * @brief    Use PDMA channel 6 to transfer data from memory to memory.
  * @note
- * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
  *
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NUC100Series.h"

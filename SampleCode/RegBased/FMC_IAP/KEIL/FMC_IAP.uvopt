@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>FMC_IAP</TargetName>
+    <TargetName>FMC_IAP_LD</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -116,6 +116,13 @@
         <tIfile></tIfile>
         <pMon>NULink\Nu_Link.dll</pMon>
       </DebugOpt>
+      <TargetDriverDllRegistry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>Nu_Link</Key>
+          <Name></Name>
+        </SetRegEntry>
+      </TargetDriverDllRegistry>
       <Breakpoint/>
       <Tracepoint>
         <THDelay>0</THDelay>
@@ -163,7 +170,7 @@
   </Target>
 
   <Target>
-    <TargetName>FMC_IAP_LD</TargetName>
+    <TargetName>FMC_IAP</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>

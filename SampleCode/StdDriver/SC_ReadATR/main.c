@@ -5,8 +5,9 @@
  * $Date: 15/04/09 11:04a $
  * @brief    Read the smartcard ATR from smartcard 0 interface.
  * @note
- * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
  *
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NUC100Series.h"

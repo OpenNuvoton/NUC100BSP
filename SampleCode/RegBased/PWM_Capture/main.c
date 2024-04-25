@@ -5,7 +5,8 @@
  * $Date: 16/07/22 9:53a $
  * @brief    Capture the PWMB Channel 1 waveform by PWMB Channel 2.
  * @note
- * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NUC100Series.h"

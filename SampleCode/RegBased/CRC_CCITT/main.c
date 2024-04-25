@@ -5,7 +5,8 @@
  * $Date: 14/12/08 11:48a $
  * @brief    Implement CRC in CRC-CCITT mode and get the CRC checksum result.
  * @note
- * Copyright (C) 2011 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include <string.h>

@@ -7,8 +7,9 @@
  *           Transmit and receive data in UART RS485 mode.
  *           This sample code needs to work with UART_RS485_Slave.
  * @note
- * Copyright (C) 2011 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
  *
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NUC100Series.h"
@@ -39,6 +40,9 @@ void RS485_FunctionTest(void);
 /*---------------------------------------------------------------------------------------------------------*/
 void RS485_SendAddressByte(uint8_t u8data)
 {
+	  /* Wait all Tx data transmission finished before changing parity setting */
+    UART_WAIT_TX_EMPTY(UART1);
+	
     /* Set UART parity as MARK and skip baud rate setting */
     UART_SetLine_Config(UART1, 0, UART_WORD_LEN_8, UART_PARITY_MARK, UART_STOP_BIT_1);
 
@@ -48,6 +52,9 @@ void RS485_SendAddressByte(uint8_t u8data)
 
 void RS485_SendDataByte(uint8_t *pu8TxBuf, uint32_t u32WriteBytes)
 {
+	  /* Wait all Tx data transmission finished before changing parity setting */
+    UART_WAIT_TX_EMPTY(UART1);
+	
     /* Set UART parity as SPACE and skip baud rate setting */
     UART_SetLine_Config(UART1, 0, UART_WORD_LEN_8, UART_PARITY_SPACE, UART_STOP_BIT_1);
 
@@ -83,9 +90,8 @@ void RS485_9bitModeMaster()
     UART_SelectRS485Mode(UART1, UART_ALT_CSR_RS485_AUD_Msk, 0);
 
     /* Set RTS pin active level as high level active */
-    UART1->MCR &= ~UART_MCR_LEV_RTS_Msk;
-    UART1->MCR |= UART_RTS_IS_HIGH_LEV_ACTIVE;
-
+    UART1->MCR = (UART1->MCR & (~UART_MCR_LEV_RTS_Msk)) | UART_RTS_IS_HIGH_LEV_ACTIVE;
+		
     /* Set TX delay time */
     UART1->TOR = 0x2000;
 

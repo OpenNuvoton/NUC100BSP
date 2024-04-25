@@ -6,16 +6,20 @@
 * @brief    Show how to debug with semi-host message print.
 *
 * @note
-* Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
 *
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
 ******************************************************************************/
 
 #include <stdio.h>
 #include "NUC100Series.h"
-# if defined (__GNUC__)
+#if (defined (__GNUC__) && (!(defined(__ARMCC_VERSION))))
 extern void initialise_monitor_handles(void);
 #endif
 
+
+void ProcessHardFault(void);
+void ProcessHardFault(void){}
 /*---------------------------------------------------------------------------------------------------------*/
 /* Main Function                                                                                            */
 /*---------------------------------------------------------------------------------------------------------*/
@@ -23,13 +27,11 @@ extern void initialise_monitor_handles(void);
 int32_t main()
 {
     int8_t item;
-
-# if defined (__GNUC__)
-    initialise_monitor_handles();
+#if (defined (__GNUC__) && (!(defined(__ARMCC_VERSION))))
+   initialise_monitor_handles();
 #endif
-
     /*
-        To enable semihost, user must define "DEBUG_ENABLE_SEMIHOST" constant when build code with M051Series BSP.
+        To enable semihost, user must define "DEBUG_ENABLE_SEMIHOST" constant when buildind sample code.
         This sample code is used to show how to print message/getchar on IDE debug environment.
         It will echo all input character back on UART #1 of KEIL IDE.
 

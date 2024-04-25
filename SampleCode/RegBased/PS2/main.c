@@ -7,8 +7,9 @@
  *           Demonstrate how to emulate a PS/2 mouse by moving mouse pointer when connecting to PC by PS/2 interface.
  *
  * @note
- * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
  *
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "NUC100Series.h"
@@ -212,7 +213,7 @@ void PS2_IRQHandler(void)
 
                     g_cmd[0] = 0;
 
-                    printf("(PS2->STATUS).TXEMPTY is (%0x)\n", ((PS2_GET_STATUS() & PS2_PS2STATUS_TXEMPTY_Msk) >> PS2_PS2STATUS_TXEMPTY_Pos));
+                    printf("(PS2->STATUS).TXEMPTY is (%0x)\n", (unsigned int)((PS2_GET_STATUS() & PS2_PS2STATUS_TXEMPTY_Msk) >> PS2_PS2STATUS_TXEMPTY_Pos));
 
                     /* Wait Tx ready */
                     if(PS2_GET_STATUS() & PS2_PS2STATUS_TXEMPTY_Msk)
