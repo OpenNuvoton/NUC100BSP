@@ -104,11 +104,11 @@ extern "C"
 #define CLK_CLKSEL1_UART_S_PLL          (0x1UL<<CLK_CLKSEL1_UART_S_Pos)   /*!< Setting UART clock source as external PLL */
 #define CLK_CLKSEL1_UART_S_HIRC         (0x3UL<<CLK_CLKSEL1_UART_S_Pos)   /*!< Setting UART clock source as external internal 22.1184MHz RC clock */
 
-#define CLK_CLKSEL1_PWM01_S_HXT         (0x0UL<<CLK_CLKSEL1_PWM01_S_Pos)  /*!< Setting PWM01 clock source as external X'tal, 
+#define CLK_CLKSEL1_PWM01_S_HXT         (0x0UL<<CLK_CLKSEL1_PWM01_S_Pos)  /*!< Setting PWM01 clock source as external X'tal,
                                                                                user must set CLK_CLKSEL2_PWM01_EXT_HXT concurrently to complete clock source as external X'tal setting*/
 #define CLK_CLKSEL1_PWM01_S_LXT         (0x1UL<<CLK_CLKSEL1_PWM01_S_Pos)  /*!< Setting PWM01 clock source as external X'tal 32.768KHz,
                                                                                user must set CLK_CLKSEL2_PWM01_EXT_LXT concurrently to complete clock source as external X'tal 32.768KHz setting*/
-#define CLK_CLKSEL1_PWM01_S_HCLK        (0x2UL<<CLK_CLKSEL1_PWM01_S_Pos)  /*!< Setting PWM01 clock source as HCLK 
+#define CLK_CLKSEL1_PWM01_S_HCLK        (0x2UL<<CLK_CLKSEL1_PWM01_S_Pos)  /*!< Setting PWM01 clock source as HCLK
                                                                                user must set CLK_CLKSEL2_PWM01_EXT_HCLK concurrently to complete clock source as HCLK setting*/
 #define CLK_CLKSEL1_PWM01_S_HIRC        (0x3UL<<CLK_CLKSEL1_PWM01_S_Pos)  /*!< Setting PWM01 clock source as internal 22.1184MHz RC clock,
                                                                                user must set CLK_CLKSEL2_PWM01_EXT_HIRC concurrently to complete clock source as internal 22.1184MHz RC clock setting*/
@@ -483,14 +483,14 @@ __STATIC_INLINE void CLK_SysTickDelay(uint32_t us)
 
     /* Waiting for down-count to zero */
     while((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == 0);
-    
+
     /* Disable SysTick counter */
-    SysTick->CTRL = 0;    
+    SysTick->CTRL = 0;
 }
 
 /**
   * @brief      This function execute long delay function.
-  * @param[in]  us  Delay time. 
+  * @param[in]  us  Delay time.
   * @return     None
   * @details    Use the SysTick to generate the long delay time and the UNIT is in us.
   *             The SysTick clock source is from HCLK, i.e the same as system core clock.
@@ -500,7 +500,7 @@ __STATIC_INLINE void CLK_SysTickDelay(uint32_t us)
 __STATIC_INLINE void CLK_SysTickLongDelay(uint32_t us)
 {
     uint32_t delay;
-        
+
     /* It should <= 335544us for each delay loop */
     delay = 335544UL;
 
@@ -514,8 +514,8 @@ __STATIC_INLINE void CLK_SysTickLongDelay(uint32_t us)
         {
             delay = us;
             us = 0UL;
-        }        
-        
+        }
+
         SysTick->LOAD = delay * CyclesPerUs;
         SysTick->VAL  = (0x0UL);
         SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
@@ -525,9 +525,10 @@ __STATIC_INLINE void CLK_SysTickLongDelay(uint32_t us)
 
         /* Disable SysTick counter */
         SysTick->CTRL = 0UL;
-    
-    }while(us > 0UL);
-    
+
+    }
+    while(us > 0UL);
+
 }
 
 

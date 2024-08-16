@@ -26,6 +26,8 @@ void AdcContScanModeTest(void);
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -34,7 +36,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
 
     /* Waiting for Internal RC clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
 
     /* Switch HCLK clock source to Internal RC */
     CLK->CLKSEL0 &= ~CLK_CLKSEL0_HCLK_S_Msk;
@@ -44,11 +48,18 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
     /* Waiting for external XTAL clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
 
     /* Set core clock as PLL_CLOCK from PLL */
     CLK->PLLCON = PLLCON_SETTING;
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+
+    /* Waiting for PLL ready */
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
+
     CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLK_S_Msk);
     CLK->CLKSEL0 |= CLK_CLKSEL0_HCLK_S_PLL;
 
@@ -156,6 +167,7 @@ void AdcContScanModeTest()
     uint8_t  u8Option;
     uint32_t u32ChannelCount;
     int32_t  i32ConversionData;
+    uint32_t u32TimeOutCnt;
 
     printf("\n\nConversion rate: %d samples/second\n", ADC_GetConversionRate());
     printf("\n");
@@ -186,7 +198,15 @@ void AdcContScanModeTest()
             ADC->ADCR |= ADC_ADCR_ADST_Msk;
 
             /* Wait conversion done */
-            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos));
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos))
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Clear the ADC interrupt flag */
             ADC->ADSR = ADC_ADSR_ADF_Msk;
@@ -198,7 +218,15 @@ void AdcContScanModeTest()
             }
 
             /* Wait conversion done */
-            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos));
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos))
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Stop A/D conversion */
             ADC->ADCR &= ~ADC_ADCR_ADST_Msk;
@@ -227,7 +255,15 @@ void AdcContScanModeTest()
             ADC->ADCR |= ADC_ADCR_ADST_Msk;
 
             /* Wait conversion done */
-            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos));
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos))
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Clear the ADC interrupt flag */
             ADC->ADSR = ADC_ADSR_ADF_Msk;
@@ -239,7 +275,15 @@ void AdcContScanModeTest()
             }
 
             /* Wait conversion done */
-            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos));
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos))
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Stop A/D conversion */
             ADC->ADCR &= ~ADC_ADCR_ADST_Msk;
@@ -307,4 +351,3 @@ int32_t main(void)
     while(1);
 
 }
-

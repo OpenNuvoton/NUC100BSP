@@ -26,31 +26,41 @@ void SH_Return(void) {}
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
-    
+
     /* Enable Internal RC 22.1184MHz clock */
     CLK->PWRCON |= (CLK_PWRCON_OSC22M_EN_Msk | CLK_PWRCON_XTL12M_EN_Msk);
 
     /* Waiting for Internal RC clock ready */
-    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
+
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
-    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;    
+    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
     CLK->CLKDIV = (CLK->CLKDIV & (~CLK_CLKDIV_HCLK_N_Msk)) | CLK_CLKDIV_HCLK(1);
-    
+
     /* Set core clock as PLL_CLOCK from PLL */
     CLK->PLLCON = PLLCON_SETTING;
-    while (!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+
+    /* Waiting for PLL ready */
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
+
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
-    
+
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
     CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
-    
+
     /* Enable module clock */
-    CLK->AHBCLK |= CLK_AHBCLK_ISP_EN_Msk;	
+    CLK->AHBCLK |= CLK_AHBCLK_ISP_EN_Msk;
 
     /* Enable I2C1 peripheral clock */
     //CLK_EnableModuleClock(I2C1_MODULE);
@@ -58,7 +68,7 @@ void SYS_Init(void)
 
     /* Select UART module clock source */
     CLK->CLKSEL1 = (CLK->CLKSEL1 & (~CLK_CLKSEL1_UART_S_Msk)) | CLK_CLKSEL1_UART_S_HIRC;
-    
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -67,7 +77,7 @@ void SYS_Init(void)
     SYS->GPA_MFP |= (SYS_GPA_MFP_PA10_I2C1_SDA | SYS_GPA_MFP_PA11_I2C1_SCL);
 
     /* I2C clock pin enable schmitt trigger */
-    SYS->GPA_MFP |= (11<<SYS_GPA_MFP_GPA_TYPE_Pos);
+    SYS->GPA_MFP |= (11 << SYS_GPA_MFP_GPA_TYPE_Pos);
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -75,16 +85,16 @@ void SYS_Init(void)
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
 {
-	  uint32_t au8CmdBuff[16];
-	
+    uint32_t au8CmdBuff[16];
+
     /* Unlock write-protected registers */
     SYS_UnlockReg();
 
-    /* Configure WDT */        
+    /* Configure WDT */
     WDT->WTCR &= ~(WDT_WTCR_WTE_Msk | WDT_WTCR_DBGACK_WDT_Msk);
     WDT->WTCR |= (WDT_TIMEOUT_2POW18 | WDT_WTCR_WTR_Msk);
-    
-     /* Init system and multi-funcition I/O */
+
+    /* Init system and multi-funcition I/O */
     SYS_Init();
 
     /* Enable FMC ISP */
@@ -103,15 +113,15 @@ int32_t main(void)
     SysTick->CTRL = SysTick->CTRL | SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
 
     /* Wait for CMD_CONNECT command until Systick time-out */
-    while (1)
+    while(1)
     {
         /* Wait for CMD_CONNECT command */
-        if (u8I2cDataReady == 1)
+        if(u8I2cDataReady == 1)
         {
             goto _ISP;
         }
         /* Systick time-out, go to APROM */
-        if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+        if(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
         {
             goto _APROM;
         }
@@ -120,9 +130,9 @@ int32_t main(void)
 _ISP:
 
     /* Parse command from master and send response back */
-    while (1)
+    while(1)
     {
-        if (u8I2cDataReady == 1)
+        if(u8I2cDataReady == 1)
         {
             /* Get command from I2C receive buffer */
             memcpy(au8CmdBuff, au8I2cRcvBuf, 64);
@@ -136,11 +146,11 @@ _APROM:
 
     /* Reset system and boot from APROM */
     SYS->RSTSRC = (SYS_RSTSRC_RSTS_POR_Msk | SYS_RSTSRC_RSTS_RESET_Msk); /* Clear reset status flag */
-    FMC->ISPCON &= ~(FMC_ISPCON_BS_Msk|FMC_ISPCON_ISPEN_Msk);
+    FMC->ISPCON &= ~(FMC_ISPCON_BS_Msk | FMC_ISPCON_ISPEN_Msk);
     SCB->AIRCR = (V6M_AIRCR_VECTKEY_DATA | V6M_AIRCR_SYSRESETREQ);
 
     /* Trap the CPU */
-    while (1);
+    while(1);
 }
 
 /*** (C) COPYRIGHT 2019 Nuvoton Technology Corp. ***/

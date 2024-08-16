@@ -61,8 +61,15 @@ extern "C"
 #define FMC_ISPCMD_READ_CID    0x0B     /*!< ISP Command: Read Company ID   */
 #define FMC_ISPCMD_READ_DID    0x0C     /*!< ISP Command: Read Device ID    */
 
+/*---------------------------------------------------------------------------------------------------------*/
+/* FMC Time-out Handler Constant Definitions                                                               */
+/*---------------------------------------------------------------------------------------------------------*/
+#define FMC_TIMEOUT_READ            (SystemCoreClock>>3) /*!< Read command time-out 125 ms       */
+#define FMC_TIMEOUT_WRITE           (SystemCoreClock>>3) /*!< Write command time-out 125 ms      */
+#define FMC_TIMEOUT_ERASE           (SystemCoreClock>>2) /*!< Erase command time-out 250 ms      */
 
 /*@}*/ /* end of group FMC_EXPORTED_CONSTANTS */
+
 
 /** @addtogroup FMC_EXPORTED_FUNCTIONS FMC Exported Functions
   @{
@@ -239,14 +246,26 @@ extern "C"
  *             The corresponding functions in CONFIG are listed in FMC section of Technical Reference Manual.
  *
  */
-static __INLINE void FMC_Write(uint32_t u32addr, uint32_t u32data)
+static __INLINE int32_t FMC_Write(uint32_t u32addr, uint32_t u32data)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_PROGRAM;   /* Set ISP Command Code */
     FMC->ISPADR = u32addr;              /* Set Target ROM Address. The address must be word alignment. */
     FMC->ISPDAT = u32data;              /* Set Data to Program */
     FMC->ISPTRG = 0x1;                  /* Trigger to start ISP procedure */
     __ISB();                            /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG);                 /* Waiting for ISP Done */
+
+    u32TimeOutCnt = FMC_TIMEOUT_WRITE;
+    while(FMC->ISPTRG)                  /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return -1;
+        }
+    }
+
+    return 0;
 }
 
 /**
@@ -261,11 +280,21 @@ static __INLINE void FMC_Write(uint32_t u32addr, uint32_t u32data)
  */
 static __INLINE uint32_t FMC_Read(uint32_t u32addr)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_READ; /* Set ISP Command Code */
     FMC->ISPADR = u32addr;         /* Set Target ROM Address. The address must be word alignment. */
     FMC->ISPTRG = 0x1;             /* Trigger to start ISP procedure */
     __ISB();                       /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG);            /* Waiting for ISP Done */
+
+    u32TimeOutCnt = FMC_TIMEOUT_READ;
+    while(FMC->ISPTRG)             /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return 0xFFFFFFFF;
+        }
+    }
 
     return FMC->ISPDAT;
 }
@@ -285,11 +314,21 @@ static __INLINE uint32_t FMC_Read(uint32_t u32addr)
  */
 static __INLINE int32_t FMC_Erase(uint32_t u32addr)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_PAGE_ERASE; /* Set ISP Command Code */
     FMC->ISPADR = u32addr;               /* Set Target ROM Address. The address must be page alignment. */
     FMC->ISPTRG = 0x1;                   /* Trigger to start ISP procedure */
     __ISB();                             /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG);                  /* Waiting for ISP Done */
+
+    u32TimeOutCnt = FMC_TIMEOUT_ERASE;
+    while(FMC->ISPTRG)                   /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return -1;
+        }
+    }
 
     /* Check ISPFF flag to know whether erase OK or fail. */
     if(FMC->ISPCON & FMC_ISPCON_ISPFF_Msk)
@@ -312,11 +351,21 @@ static __INLINE int32_t FMC_Erase(uint32_t u32addr)
  */
 static __INLINE uint32_t FMC_ReadUID(uint8_t u8index)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_READ_UID; /* Set ISP Command Code */
     FMC->ISPADR = (u8index << 2);      /* Set UID Address. It must be word alignment. */
     FMC->ISPTRG = 0x1;                 /* Trigger to start ISP procedure */
     __ISB();                           /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG);                /* Waiting for ISP Done */
+
+    u32TimeOutCnt = FMC_TIMEOUT_READ;
+    while(FMC->ISPTRG)                 /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return 0xFFFFFFFF;
+        }
+    }
 
     return FMC->ISPDAT;
 }
@@ -334,11 +383,22 @@ static __INLINE uint32_t FMC_ReadUID(uint8_t u8index)
   */
 static __INLINE uint32_t FMC_ReadCID(void)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_READ_CID;           /* Set ISP Command Code */
     FMC->ISPADR = 0x0;                           /* Must keep 0x0 when read CID */
     FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;          /* Trigger to start ISP procedure */
     __ISB();                                     /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk) ;  /* Waiting for ISP Done */
+
+
+    u32TimeOutCnt = FMC_TIMEOUT_READ;
+    while(FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk)    /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return 0xFFFFFFFF;
+        }
+    }
 
     return FMC->ISPDAT;
 }
@@ -355,11 +415,21 @@ static __INLINE uint32_t FMC_ReadCID(void)
   */
 static __INLINE uint32_t FMC_ReadPID(void)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_READ_DID;          /* Set ISP Command Code */
     FMC->ISPADR = 0x04;                         /* Must keep 0x4 when read PID */
     FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;         /* Trigger to start ISP procedure */
     __ISB();                                    /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk);  /* Waiting for ISP Done */
+
+    u32TimeOutCnt = FMC_TIMEOUT_READ;
+    while(FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk)   /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return 0xFFFFFFFF;
+        }
+    }
 
     return FMC->ISPDAT;
 }
@@ -376,11 +446,21 @@ static __INLINE uint32_t FMC_ReadPID(void)
   */
 static __INLINE uint32_t FMC_ReadUCID(uint32_t u32Index)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_READ_UID;          /* Set ISP Command Code */
     FMC->ISPADR = (0x04 * u32Index) + 0x10;     /* The UCID is at offset 0x10 with word alignment. */
     FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;         /* Trigger to start ISP procedure */
     __ISB();                                    /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk);  /* Waiting for ISP Done */
+
+    u32TimeOutCnt = FMC_TIMEOUT_READ;
+    while(FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk)   /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return 0xFFFFFFFF;
+        }
+    }
 
     return FMC->ISPDAT;
 }
@@ -400,13 +480,25 @@ static __INLINE uint32_t FMC_ReadUCID(uint32_t u32Index)
  *              VECMAP only valid when new IAP function is enabled. (CBS = 10'b or 00'b)
  *
  */
-static __INLINE void FMC_SetVectorPageAddr(uint32_t u32PageAddr)
+static __INLINE int32_t FMC_SetVectorPageAddr(uint32_t u32PageAddr)
 {
+    uint32_t u32TimeOutCnt;
+
     FMC->ISPCMD = FMC_ISPCMD_VECMAP; /* Set ISP Command Code */
     FMC->ISPADR = u32PageAddr;       /* The address of specified page which will be map to address 0x0. It must be page alignment. */
     FMC->ISPTRG = 0x1;               /* Trigger to start ISP procedure */
     __ISB();                         /* To make sure ISP/CPU be Synchronized */
-    while(FMC->ISPTRG);              /* Waiting for ISP Done */
+
+    u32TimeOutCnt = FMC_TIMEOUT_WRITE;
+    while(FMC->ISPTRG)               /* Waiting for ISP Done */
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            return -1;
+        }
+    }
+
+    return 0;
 }
 
 
@@ -454,4 +546,3 @@ extern uint32_t FMC_ReadDataFlashBaseAddr(void);
 
 
 #endif
-

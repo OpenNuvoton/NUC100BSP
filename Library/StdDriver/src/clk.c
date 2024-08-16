@@ -189,14 +189,14 @@ uint32_t CLK_SetCoreClock(uint32_t u32Hclk)
 
     /* Switch to HIRC for Safe. Avoid HCLK too high when applying new divider. */
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
-    while((CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk) == 0);
+    CLK_WaitClockReady(CLK_CLKSTATUS_OSC22M_STB_Msk);
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
 
     /* Disable PLL to Avoid PLL Unstable while Setting */
     CLK->PLLCON |= CLK_PLLCON_PD_Msk;
 
     /* Configure PLL setting if HXT clock is stable */
-    if(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk)    
+    if(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk)
     {
         u32Hclk = CLK_EnablePLL(CLK_PLLCON_PLL_SRC_HXT, u32Hclk);
     }
@@ -241,7 +241,7 @@ void CLK_SetHCLK(uint32_t u32ClkSrc, uint32_t u32ClkDiv)
 
     /* Switch to HIRC for Safe. Avoid HCLK too high when applying new divider. */
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
-    while((CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk) == 0);
+    CLK_WaitClockReady(CLK_CLKSTATUS_OSC22M_STB_Msk);
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
 
     /* Apply new Divider */
@@ -684,7 +684,7 @@ void CLK_DisablePLL(void)
   */
 uint32_t CLK_WaitClockReady(uint32_t u32ClkMask)
 {
-    int32_t i32TimeOutCnt = 1200000;   
+    int32_t i32TimeOutCnt = 1200000;
 
     while((CLK->CLKSTATUS & u32ClkMask) != u32ClkMask)
     {
@@ -707,39 +707,39 @@ uint32_t CLK_WaitClockReady(uint32_t u32ClkMask)
   * @param[in]  u32Count is System Tick reload value. It could be 0~0xFFFFFF.
   * @return     None
   * @details    This function set System Tick clock source, reload value, enable System Tick counter and interrupt.
-  *             The register write-protection function should be disabled before using this function. 
+  *             The register write-protection function should be disabled before using this function.
   */
-void CLK_EnableSysTick(uint32_t u32ClkSrc, uint32_t u32Count) 
+void CLK_EnableSysTick(uint32_t u32ClkSrc, uint32_t u32Count)
 {
     /* Set System Tick counter disabled */
-    SysTick->CTRL = 0;    
+    SysTick->CTRL = 0;
 
     /* Set System Tick clock source */
-    if( u32ClkSrc == CLK_CLKSEL0_STCLK_S_HCLK )         
+    if(u32ClkSrc == CLK_CLKSEL0_STCLK_S_HCLK)
         SysTick->CTRL |= SysTick_CTRL_CLKSOURCE_Msk;
     else
-        CLK->CLKSEL0 = (CLK->CLKSEL0 & ~CLK_CLKSEL0_STCLK_S_Msk) | u32ClkSrc; 
+        CLK->CLKSEL0 = (CLK->CLKSEL0 & ~CLK_CLKSEL0_STCLK_S_Msk) | u32ClkSrc;
 
     /* Set System Tick reload value */
-    SysTick->LOAD = u32Count;   
-    
+    SysTick->LOAD = u32Count;
+
     /* Clear System Tick current value and counter flag */
-    SysTick->VAL = 0;           
-    
-    /* Set System Tick interrupt enabled and counter enabled */    
-    SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;       
+    SysTick->VAL = 0;
+
+    /* Set System Tick interrupt enabled and counter enabled */
+    SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
 }
 
 /**
   * @brief      Disable System Tick counter
-  * @param      None 
+  * @param      None
   * @return     None
   * @details    This function disable System Tick counter.
   */
-void CLK_DisableSysTick(void) 
-{    
+void CLK_DisableSysTick(void)
+{
     /* Set System Tick counter disabled */
-	SysTick->CTRL = 0;    
+    SysTick->CTRL = 0;
 }
 
 

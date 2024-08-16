@@ -68,12 +68,16 @@ static volatile uint32_t g_u32hiHour, g_u32loHour, g_u32hiMin, g_u32loMin, g_u32
   */
 void RTC_Open(S_RTC_TIME_DATA_T *sPt)
 {
+    uint32_t u32TimeOutCnt;
+
     RTC->INIR = RTC_INIT_KEY;
 
     if(RTC->INIR != 0x1)
     {
         RTC->INIR = RTC_INIT_KEY;
-        while(RTC->INIR != 0x1);
+        u32TimeOutCnt = RTC_TIMEOUT;
+        while(RTC->INIR != 0x1)
+            if(--u32TimeOutCnt == 0) return;
     }
 
     if(sPt == NULL)
@@ -83,7 +87,11 @@ void RTC_Open(S_RTC_TIME_DATA_T *sPt)
     RTC_SetDateAndTime(sPt);
 
     /* Waiting for RTC settings stable */
-    while((RTC->AER & RTC_AER_ENF_Msk) == RTC_AER_ENF_Msk);
+    u32TimeOutCnt = RTC_TIMEOUT;
+    while((RTC->AER & RTC_AER_ENF_Msk) == RTC_AER_ENF_Msk)
+    {
+        if(--u32TimeOutCnt == 0) return;
+    }
 }
 
 /**
@@ -719,11 +727,18 @@ void RTC_DisableInt(uint32_t u32IntFlagMask)
   */
 void RTC_EnableSpareRegister(void)
 {
+    uint32_t u32TimeOutCnt = RTC_TIMEOUT;
+
     RTC_WaitAccessEnable();
 
     RTC->SPRCTL |= RTC_SPRCTL_SPREN_Msk;
-	
-    while(!(RTC->SPRCTL & RTC_SPRCTL_SPRRDY_Msk));	
+
+    while(!(RTC->SPRCTL & RTC_SPRCTL_SPRRDY_Msk))
+    {
+        if(--u32TimeOutCnt == 0)
+            return;
+    }
+
 }
 
 /**

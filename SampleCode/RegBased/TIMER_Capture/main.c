@@ -96,6 +96,8 @@ void TMR3_IRQHandler(void)
 
 void SYS_Init(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -117,10 +119,20 @@ void SYS_Init(void)
     /* Enable PLL and Set PLL frequency */
     CLK->PLLCON = PLLCON_SETTING;
 
-    /* Waiting for clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC10K_STB_Msk));
+
+
+    /* Waiting for PLL ready */
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
+
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
+
+u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC10K_STB_Msk))
+        if(--u32TimeOutCnt == 0) return;
 
     /* Switch HCLK clock source to PLL, STCLK to HCLK/2 */
     CLK->CLKSEL0 = CLK_CLKSEL0_STCLK_S_HCLK_DIV2 | CLK_CLKSEL0_HCLK_S_PLL;
@@ -143,7 +155,7 @@ void SYS_Init(void)
     /* Set PB multi-function pins for UART0 RXD, TXD, TM0, TM2, TM3 and TM2_EXT */
     SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB0_Msk | SYS_GPB_MFP_PB1_Msk);
     SYS->GPB_MFP |= SYS_GPB_MFP_PB0_UART0_RXD | SYS_GPB_MFP_PB1_UART0_TXD;
-    
+
     SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB0_Msk | SYS_GPB_MFP_PB1_Msk |
                       SYS_GPB_MFP_PB8_Msk | SYS_GPB_MFP_PB10_Msk | SYS_GPB_MFP_PB11_Msk |
                       SYS_GPB_MFP_PB2_Msk);
@@ -153,7 +165,7 @@ void SYS_Init(void)
 
     SYS->ALT_MFP  &= ~SYS_ALT_MFP_PB2_Msk;
     SYS->ALT_MFP  |= SYS_ALT_MFP_PB2_TM2_EXT;
-    
+
     SYS->ALT_MFP2 = SYS_ALT_MFP2_PB2_TM2_EXT;
 }
 
