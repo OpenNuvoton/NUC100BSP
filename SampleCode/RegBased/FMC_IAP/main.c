@@ -106,7 +106,9 @@ void UART0_Init(void)
     UART0->LCR = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
-
+#if defined ( __ICCARM__ )
+#pragma optimize=low
+#endif
 void FMC_LDROM_Test(void)
 {
     int32_t  i32Err;
@@ -215,7 +217,7 @@ int32_t main(void)
     u32Cfg = FMC_Read(FMC_CONFIG_BASE);
     if((u32Cfg & 0xc0) != 0x80)
     {
-        printf("Do you want to set to new IAP mode (APROM boot + LDROM) y/n?\n");
+        printf("Do you want to set to new IAP mode (APROM boot + LDROM) (y/n)?\n");
         if(getchar() == 'y')
         {
             FMC->ISPCON |= FMC_ISPCON_CFGUEN_Msk; /* Enable user configuration update */
@@ -239,7 +241,7 @@ int32_t main(void)
         }
     }
 
-    printf("Do you want to write LDROM code to 0x100000\n");
+    printf("Do you want to write LDROM code to 0x100000 (y/n)?\n");
 
     if(getchar() == 'y')
     {
@@ -262,7 +264,7 @@ int32_t main(void)
         FMC_LDROM_Test();
     }
 
-#if defined(__GNUC__)
+#if defined(__GNUC_AP__)
     for(i = 0; i < 4; i++)
     {
         /* Call the function of LDROM */
