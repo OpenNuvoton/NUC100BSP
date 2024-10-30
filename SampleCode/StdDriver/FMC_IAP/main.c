@@ -74,6 +74,9 @@ void UART0_Init(void)
     UART_Open(UART0, 115200);
 }
 
+#if defined ( __ICCARM__ )
+#pragma optimize=low
+#endif
 
 void FMC_LDROM_Test(void)
 {
@@ -145,7 +148,6 @@ void FMC_LDROM_Test(void)
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
 {
-    uint32_t u32Data;
     uint32_t u32Cfg;
     int32_t (*func)(int32_t n);
     int32_t i;
@@ -191,10 +193,8 @@ int32_t main(void)
             /* Set CBS to b'10 */
             u32Cfg &= ~0xc0ul;
             u32Cfg |= 0x80;
-            u32Data = FMC_Read(FMC_CONFIG_BASE + 0x4); /* Backup the data of config1 */
             FMC_Erase(FMC_CONFIG_BASE);
             FMC_Write(FMC_CONFIG_BASE, u32Cfg);
-            FMC_Write(FMC_CONFIG_BASE + 0x4, u32Data);
 
             printf("Press any key to reset system to enable new IAP mode ...\n");
             getchar();
