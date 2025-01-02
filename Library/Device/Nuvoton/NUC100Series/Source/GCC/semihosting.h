@@ -2,6 +2,10 @@
 #ifndef ARM_SEMIHOSTING_H_
 #define ARM_SEMIHOSTING_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // ----------------------------------------------------------------------------
 
 // Semihosting operations.
@@ -112,5 +116,9 @@ report_exception (int reason)
 }
 
 // ----------------------------------------------------------------------------
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ARM_SEMIHOSTING_H_

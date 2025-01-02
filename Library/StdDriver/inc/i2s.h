@@ -295,6 +295,10 @@ void I2S_DisableMCLK(I2S_T *i2s);
 
 /*@}*/ /* end of group Device_Driver */
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
 /*** (C) COPYRIGHT 2014 Nuvoton Technology Corp. ***/
